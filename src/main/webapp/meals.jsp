@@ -15,12 +15,42 @@
             color: red;
         }
     </style>
+    <script>
+        function filter(){
+            var start_date = document.getElementById("start_date").value;
+            var end_date = document.getElementById("end_date").value;
+            var start_time = document.getElementById("start_time").value;
+            var end_time = document.getElementById("end_time").value;
+
+            document.location.href = "meals?" +
+                "startDate=" + start_date + "&" +
+                "endDate=" + end_date + "&" +
+                "startTime=" + start_time + "&" +
+                "endTime=" + end_time
+        }
+    </script>
 </head>
 <body>
 <section>
     <h3><a href="index.html">Home</a></h3>
     <h2>Meals</h2>
     <a href="meals?action=create">Add Meal</a>
+    <hr/>
+    <label>
+        От даты <input type="date" id="start_date" value="${startDate}">
+    </label>
+    <label>
+        До даты <input type="date" id="end_date" value="${endDate}">
+    </label>
+    <label>
+        От времени <input type="time" id="start_time" value="${startTime}">
+    </label>
+    <label>
+        До времени <input type="time" id="end_time" value="${endTime}">
+    </label>
+    <br/>
+    <a href="meals">Сбросить</a>
+    <a href="#" onclick="filter()">Отфильтровать</a>
     <hr/>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
@@ -33,7 +63,7 @@
         </tr>
         </thead>
         <c:forEach items="${meals}" var="meal">
-            <jsp:useBean id="meal" scope="page" type="ru.javawebinar.topjava.model.MealWithExceed"/>
+            <jsp:useBean id="meal" scope="page" type="ru.javawebinar.topjava.to.MealWithExceed"/>
             <tr class="${meal.exceed ? 'exceeded' : 'normal'}">
                 <td>
                         <%--${meal.dateTime.toLocalDate()} ${meal.dateTime.toLocalTime()}--%>
