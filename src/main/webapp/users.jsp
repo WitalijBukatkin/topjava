@@ -17,7 +17,9 @@
             </c:forEach>
         </select>
     </label>
-    <button>Изменить</button>
+    <button>Edit</button>
+    <br/>
+    <a href="meals">Go to meals</a>
 </form>
 </body>
 </html>
