@@ -36,12 +36,8 @@ public class MealRestController {
         log.info("get filtered list");
 
         return getWithExceeded(service.getAll().stream()
-                .filter(m -> DateTimeUtil.isBetween(m.getTime(),
-                                startTime!=null ? startTime : LocalTime.MIN,
-                                endTime!=null ? endTime : LocalTime.MAX) &&
-                             DateTimeUtil.isBetween(m.getDate(),
-                                    startDate!=null ? startDate : LocalDate.MIN,
-                                    endDate!=null ? endDate : LocalDate.MAX))
+                .filter(m -> DateTimeUtil.isBetween(m.getTime(), startTime, endTime) &&
+                             DateTimeUtil.isBetween(m.getDate(), startDate, endDate))
                 .collect(Collectors.toList()),
                 authUserCaloriesPerDay());
     }
