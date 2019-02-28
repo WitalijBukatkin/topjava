@@ -1,12 +1,18 @@
 package ru.javawebinar.topjava.web.user;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.service.UserService;
 
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
 @Controller
 public class ProfileRestController extends AbstractUserController {
+
+    public ProfileRestController(@Qualifier("userServiceImpl") UserService service) {
+        super(service);
+    }
 
     public User get() {
         return super.get(authUserId());
