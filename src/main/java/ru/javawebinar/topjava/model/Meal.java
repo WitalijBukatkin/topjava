@@ -9,20 +9,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+@SuppressWarnings("JpaQlInspection")
 @NamedQueries({
-        @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id=:id"),
-        @NamedQuery(name = Meal.BY_MEAL_ID, query = "SELECT Meal FROM Meal WHERE id=:id AND user_id = :user_id"),
-        @NamedQuery(name = Meal.BETWEEN, query = "SELECT Meal FROM Meal WHERE user_id=:user_id AND date_time BETWEEN :start_date AND :end_date ORDER BY date_time DESC"),
-        @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT Meal FROM Meal WHERE user_id=:user_id ORDER BY date_time DESC")
+        @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m FROM Meal m WHERE m.user.id=:userId ORDER BY m.dateTime DESC"),
+        @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id=:id AND m.user.id=:userId"),
+        @NamedQuery(name = Meal.BETWEEN, query = "SELECT m FROM Meal m WHERE m.user.id=:userId AND m.dateTime BETWEEN :startDate AND :endDate ORDER BY m.dateTime DESC"),
 })
 @Entity
 @Table(name = "meals", uniqueConstraints = {@UniqueConstraint(name = "meals_unique_user_datetime_idx", columnNames = {"user_id", "date_time"})})
 public class Meal extends AbstractBaseEntity {
-
+    public static final String ALL_SORTED = "Meal.getAll";
     public static final String DELETE = "Meal.delete";
     public static final String BETWEEN = "Meal.getBetween";
-    public static final String BY_MEAL_ID = "Meal.getByUserIdAndMealId";
-    public static final String ALL_SORTED = "Meal.getAllSorted";
 
     @Column(name = "date_time", nullable = false)
     @NotNull
