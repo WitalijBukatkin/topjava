@@ -63,6 +63,11 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
         return getAllFiltered(userId, meal -> Util.isBetween(meal.getDateTime(), startDateTime, endDateTime));
     }
 
+    @Override
+    public Meal getWithUser(int id, int userId) {
+        return null;
+    }
+
     private List<Meal> getAllFiltered(int userId, Predicate<Meal> filter) {
         var meals = usersMealsMap.get(userId);
         return meals == null ? Collections.emptyList() :

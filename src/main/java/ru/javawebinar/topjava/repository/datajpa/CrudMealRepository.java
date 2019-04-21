@@ -23,7 +23,7 @@ public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
     <S extends Meal> S save(S s);
 
     @Override
-    Meal getOne(Integer integer);
+    Meal getOne(Integer id);
 
     @Modifying
     @Query(name = Meal.ALL_SORTED)
@@ -34,4 +34,7 @@ public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
     List<Meal> getBetween(@Param("userId") int userId,
                           @Param("startDate") LocalDateTime startDate,
                           @Param("endDate") LocalDateTime endDate);
+
+    @Query(name = Meal.GET_WITH_USER)
+    Meal getWithUser(@Param("id") int id, @Param("userId") int userId);
 }
