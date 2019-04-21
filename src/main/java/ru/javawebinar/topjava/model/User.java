@@ -15,6 +15,7 @@ import java.util.*;
 
 import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
 
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @NamedQueries({
         @NamedQuery(name = User.DELETE, query = "DELETE FROM User u WHERE u.id=:id"),
         @NamedQuery(name = User.BY_EMAIL, query = "SELECT u FROM User u LEFT JOIN FETCH u.roles WHERE u.email=?1"),
@@ -49,6 +50,10 @@ public class User extends AbstractNamedEntity {
     @NotNull
     private Date registered = new Date();
 
+    @Column(name = "calories_per_day", columnDefinition = "int default 2000")
+    @Range(min = 10, max = 10000)
+    private int caloriesPerDay = DEFAULT_CALORIES_PER_DAY;
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")

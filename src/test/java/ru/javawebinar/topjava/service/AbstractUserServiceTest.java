@@ -7,6 +7,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.dao.DataAccessException;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.repository.JpaUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
