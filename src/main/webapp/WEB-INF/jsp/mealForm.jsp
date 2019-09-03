@@ -7,7 +7,7 @@
 <body>
 <jsp:include page="fragments/bodyHeader.jsp"/>
 <section>
-    <h2><spring:message code="common.${param.action == 'create' ? 'createMeal' : 'editMeal'}"/></h2>
+    <h2><spring:message code="common.${meal.id == null ? 'createMeal' : 'editMeal'}"/></h2>
     <hr>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
     <form method="post" action="meal">
