@@ -28,7 +28,13 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
     @Test
     public void deleteNotFound() throws Exception {
         thrown.expect(NotFoundException.class);
-        service.delete(MEAL1_ID, 1);
+        service.delete(1, USER_ID);
+    }
+
+    @Test
+    public void deleteNotOwn() throws Exception {
+        thrown.expect(NotFoundException.class);
+        service.delete(MEAL1_ID, ADMIN_ID);
     }
 
     @Test
@@ -48,6 +54,12 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
 
     @Test
     public void getNotFound() throws Exception {
+        thrown.expect(NotFoundException.class);
+        service.get(1, ADMIN_ID);
+    }
+
+    @Test
+    public void getNotOwn() throws Exception {
         thrown.expect(NotFoundException.class);
         service.get(MEAL1_ID, ADMIN_ID);
     }
