@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 @Transactional(readOnly = true)
-public class JpaUserRepositoryImpl implements UserRepository {
+public class JpaUserRepository implements UserRepository {
 
 /*
     @Autowired

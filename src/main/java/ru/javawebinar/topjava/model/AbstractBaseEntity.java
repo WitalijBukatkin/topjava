@@ -43,7 +43,7 @@ public abstract class AbstractBaseEntity implements Persistable<Integer> {
 
     @Override
     public String toString() {
-        return String.format("Entity %s (%s)", getClass().getName(), id);
+        return getClass().getSimpleName() + ":" + id;
     }
 
     @Override

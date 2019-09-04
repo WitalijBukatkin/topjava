@@ -32,7 +32,7 @@ public class RootController {
 
     @PostMapping("/users")
     public String setUser(HttpServletRequest request) {
-        int userId = Integer.valueOf(request.getParameter("userId"));
+        int userId = Integer.parseInt(request.getParameter("userId"));
         SecurityUtil.setAuthUserId(userId);
         return "redirect:meals";
     }
