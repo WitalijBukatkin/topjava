@@ -5,13 +5,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.SecurityUtil;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
@@ -22,6 +20,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.TestUtil.readFromJson;
 import static ru.javawebinar.topjava.TestUtil.readListFromJsonMvcResult;
+import static ru.javawebinar.topjava.util.MealsUtil.getFilteredWithExcess;
+import static ru.javawebinar.topjava.util.MealsUtil.getWithExcess;
 
 class MealRestControllerTest extends AbstractControllerTest {
     private static final String REST_URL = MealRestController.REST_URL + "/";
@@ -32,12 +32,12 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(contentJson(MEAL1));
+                .andExpect(result -> assertMatch(readListFromJsonMvcResult(result, Meal.class), MEAL1));
     }
 
     @Test
     void testGetAll() throws Exception {
-        List<MealTo> expected = MealsUtil.getWithExcess(MEALS, SecurityUtil.authUserCaloriesPerDay());
+        List<MealTo> expected = getWithExcess(MEALS, SecurityUtil.authUserCaloriesPerDay());
 
         mockMvc.perform(get(REST_URL))
                 .andExpect(status().isOk())
@@ -56,28 +56,23 @@ class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void testCreateWithLocation() throws Exception {
-        Meal expected = new Meal(LocalDateTime.now(), "Test dinner", 300);
+        Meal created = getCreated();
 
         ResultActions actions = mockMvc.perform(post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(expected)))
+                .content(JsonUtil.writeValue(created)))
                 .andExpect(status().isCreated());
 
         Meal returned = readFromJson(actions, Meal.class);
-        expected.setId(returned.getId());
+        created.setId(returned.getId());
 
-        assertMatch(returned, expected);
-
-        List<Meal> expectedGetAll = new ArrayList<>(MEALS);
-        expectedGetAll.add(0, expected);
-
-        assertIterableEquals(expectedGetAll, mealService.getAll(SecurityUtil.authUserId()));
+        assertMatch(returned, created);
+        assertMatch(mealService.getAll(SecurityUtil.authUserId()), created, MEAL6, MEAL5, MEAL4, MEAL3, MEAL2, MEAL1);
     }
 
     @Test
     void testUpdate() throws Exception {
-        Meal updated = new Meal(MEAL1);
-        updated.setDescription("Updated description");
+        Meal updated = getUpdated();
 
         mockMvc.perform(put(REST_URL + MEAL1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -103,7 +98,7 @@ class MealRestControllerTest extends AbstractControllerTest {
 
         List<MealTo> actual = readListFromJsonMvcResult(action.andReturn(), MealTo.class);
 
-        List<MealTo> expected = MealsUtil.getFilteredWithExcess(List.of(MEAL6, MEAL5, MEAL4), SecurityUtil.authUserCaloriesPerDay(),
+        List<MealTo> expected = getFilteredWithExcess(List.of(MEAL6, MEAL5, MEAL4), SecurityUtil.authUserCaloriesPerDay(),
                 startDateTime.toLocalTime(), endDateTime.toLocalTime());
 
         assertIterableEquals(expected, actual);
