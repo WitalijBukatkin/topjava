@@ -1,5 +1,5 @@
 let filterForm = $('#filterForm');
-var filterData;
+var filterData = null;
 
 $(function () {
     makeEditable({
