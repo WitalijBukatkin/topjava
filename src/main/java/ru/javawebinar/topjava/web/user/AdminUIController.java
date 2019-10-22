@@ -21,7 +21,7 @@ public class AdminUIController extends AbstractUserController {
     @Override
     @DeleteMapping("/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable("id") int id) {
+    public void delete(@PathVariable int id) {
         super.delete(id);
     }
 
