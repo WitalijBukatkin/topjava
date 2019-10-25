@@ -1,5 +1,5 @@
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/e8c6d0244b6b4fb3bce0330f2d93e2c0)](https://www.codacy.com/app/WitalijBukatkin/topjava)
-[![Build Status](https://travis-ci.org/JavaWebinar/topjava.svg?branch=master)](https://travis-ci.org/WitalijBukatkin/topjava)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/83d273733839469b86b4a8c2567f788c)](https://www.codacy.com/manual/WitalijBukatkin/topjava?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=WitalijBukatkin/topjava&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.org/WitalijBukatkin/topjava.svg?branch=master)](https://travis-ci.org/WitalijBukatkin/topjava)
 
 Java Enterprise Online Project
 ===============================
