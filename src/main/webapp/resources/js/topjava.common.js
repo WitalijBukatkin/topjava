@@ -8,7 +8,9 @@ function makeEditable(ctx) {
     });
 
     // solve problem with cache in IE: https://stackoverflow.com/a/4303862/548473
-    $.ajaxSetup({cache: false});
+    $.ajaxSetup({
+        cache: false
+    });
 }
 
 function add() {
@@ -21,7 +23,8 @@ function updateRow(id) {
     $("#modalTitle").html(i18n["editTitle"]);
     $.get(context.ajaxUrl + id, function (data) {
         $.each(data, function (key, value) {
-            form.find("input[name='" + key + "']").val(value);
+            form.find("input[name='" + key + "']").val(
+                key === 'dateTime' ? dateTimeConverter(value) : value);
         });
         $('#editRow').modal();
     });
@@ -41,6 +44,7 @@ function deleteRow(id) {
 
 function updateTableByData(data) {
     context.datatableApi.clear().rows.add(data).draw();
+    $(".datetimepicker").datetimepicker();
 }
 
 function save() {
