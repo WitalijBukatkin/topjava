@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.util;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import ru.javawebinar.topjava.HasId;
+import ru.javawebinar.topjava.util.exception.IllegalRequestDataException;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.validation.*;
@@ -33,19 +34,13 @@ public class ValidationUtil {
         }
     }
 
-    public static void checkNew(HasId bean) {
-        if (!bean.isNew()) {
-            throw new IllegalArgumentException(bean + " must be new (id=null)");
-        }
-    }
+    private static final Validator validator;
 
-    public static void assureIdConsistent(HasId bean, int id) {
-//      conservative when you reply, but accept liberally (http://stackoverflow.com/a/32728226/548473)
-        if (bean.isNew()) {
-            bean.setId(id);
-        } else if (bean.id() != id) {
-            throw new IllegalArgumentException(bean + " must be with id=" + id);
-        }
+    static {
+        //  From Javadoc: implementations are thread-safe and instances are typically cached and reused.
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        //  From Javadoc: implementations of this interface must be thread-safe
+        validator = factory.getValidator();
     }
 
     //  http://stackoverflow.com/a/28565320/548473
