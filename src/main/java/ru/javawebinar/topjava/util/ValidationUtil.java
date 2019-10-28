@@ -1,10 +1,10 @@
 package ru.javawebinar.topjava.util;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import ru.javawebinar.topjava.HasId;
 import ru.javawebinar.topjava.util.exception.IllegalRequestDataException;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
+import ru.javawebinar.topjava.util.exception.ValidationException;
 
 import javax.validation.*;
 import java.util.Set;
@@ -54,7 +54,7 @@ public class ValidationUtil {
         return result;
     }
 
-    public static ResponseEntity<String> getErrorResponse(BindingResult result) {
+    public static void getErrorResponse(BindingResult result) {
         StringJoiner joiner = new StringJoiner("<br>");
         result.getFieldErrors().forEach(
                 fe -> {
@@ -66,7 +66,7 @@ public class ValidationUtil {
                         joiner.add(msg);
                     }
                 });
-        return ResponseEntity.unprocessableEntity().body(joiner.toString());
+        throw new ValidationException(joiner.toString());
     }
 
     public static void checkNew(HasId bean) {
