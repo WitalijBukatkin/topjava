@@ -5,8 +5,24 @@
 
 <nav class="navbar navbar-dark bg-dark py-0">
     <div class="container">
-        <a href="meals" class="navbar-brand"><img src="resources/images/icon-meal.png"> <spring:message
+        <a href="meals" class="navbar-brand"><img src="resources/images/icon-meal.png"><spring:message
                 code="app.title"/></a>
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                ${pageContext.response.locale}<span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <sec:authorize access="isAuthenticated()">
+                    <li><a href="?lang=ru">ru</a></li>
+                    <li><a href="?lang=en">en</a></li>
+                </sec:authorize>
+                <sec:authorize access="isAnonymous()">
+                    <li><a href="login?lang=ru">ru</a></li>
+                    <li><a href="login?lang=en">en</a></li>
+                </sec:authorize>
+            </ul>
+        </div>
+
         <sec:authorize access="isAuthenticated()">
             <form:form class="form-inline my-2" action="logout" method="post">
                 <sec:authorize access="hasRole('ROLE_ADMIN')">
