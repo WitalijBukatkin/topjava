@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.to.UserTo;
 import ru.javawebinar.topjava.util.UserUtil;
@@ -73,6 +75,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @Transactional(propagation = Propagation.NEVER)
     void registerWithDuplicateEmail() throws Exception {
         UserTo createdTo = new UserTo(null, "newName", USER.getEmail(), "newPassword", 1500);
 
@@ -106,6 +109,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @Transactional(propagation = Propagation.NEVER)
     void updateWithDuplicateEmail() throws Exception {
         UserTo updatedTo = new UserTo(null, "newName", ADMIN.getEmail(), "newPassword", 1500);
 

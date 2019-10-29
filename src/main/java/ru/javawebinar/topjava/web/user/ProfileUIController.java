@@ -1,6 +1,6 @@
 package ru.javawebinar.topjava.web.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -10,16 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.support.SessionStatus;
 import ru.javawebinar.topjava.to.UserTo;
 import ru.javawebinar.topjava.web.SecurityUtil;
-import ru.javawebinar.topjava.web.validator.DuplicateEmailValidator;
 
 import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/profile")
 public class ProfileUIController extends AbstractUserController {
-
-    @Autowired
-    private DuplicateEmailValidator duplicateEmailValidator;
 
     @GetMapping
     public String profile() {
@@ -28,13 +24,16 @@ public class ProfileUIController extends AbstractUserController {
 
     @PostMapping
     public String updateProfile(@Valid UserTo userTo, BindingResult result, SessionStatus status) {
-        userTo.setId(SecurityUtil.authUserId());
-        duplicateEmailValidator.validate(userTo, result);
-
         if (result.hasErrors()) {
             return "profile";
         } else {
-            super.update(userTo, SecurityUtil.authUserId());
+            try {
+                super.update(userTo, SecurityUtil.authUserId());
+            } catch (DataIntegrityViolationException e) {
+                result.rejectValue("email", "user.duplicateEmail",
+                        "User with this email already exists");
+                return "profile";
+            }
             SecurityUtil.get().update(userTo);
             status.setComplete();
             return "redirect:/meals";
@@ -50,13 +49,20 @@ public class ProfileUIController extends AbstractUserController {
 
     @PostMapping("/register")
     public String saveRegister(@Valid UserTo userTo, BindingResult result, SessionStatus status, ModelMap model) {
-        duplicateEmailValidator.validate(userTo, result);
 
         if (result.hasErrors()) {
             model.addAttribute("register", true);
             return "profile";
         } else {
-            super.create(userTo);
+            try {
+                super.create(userTo);
+            } catch (DataIntegrityViolationException e) {
+                result.rejectValue("email", "user.duplicateEmail",
+                        "User with this email already exists");
+
+                model.addAttribute("register", true);
+                return "profile";
+            }
             status.setComplete();
             return "redirect:/login?message=app.registered&username=" + userTo.getEmail();
         }

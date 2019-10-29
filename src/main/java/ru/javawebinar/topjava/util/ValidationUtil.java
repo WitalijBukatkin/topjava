@@ -1,14 +1,11 @@
 package ru.javawebinar.topjava.util;
 
-import org.springframework.validation.BindingResult;
 import ru.javawebinar.topjava.HasId;
 import ru.javawebinar.topjava.util.exception.IllegalRequestDataException;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
-import ru.javawebinar.topjava.util.exception.ValidationException;
 
 import javax.validation.*;
 import java.util.Set;
-import java.util.StringJoiner;
 
 public class ValidationUtil {
 
@@ -52,21 +49,6 @@ public class ValidationUtil {
             result = cause;
         }
         return result;
-    }
-
-    public static void getErrorResponse(BindingResult result) {
-        StringJoiner joiner = new StringJoiner("<br>");
-        result.getFieldErrors().forEach(
-                fe -> {
-                    String msg = fe.getDefaultMessage();
-                    if (msg != null) {
-                        if (!msg.startsWith(fe.getField())) {
-                            msg = fe.getField() + ' ' + msg;
-                        }
-                        joiner.add(msg);
-                    }
-                });
-        throw new ValidationException(joiner.toString());
     }
 
     public static void checkNew(HasId bean) {

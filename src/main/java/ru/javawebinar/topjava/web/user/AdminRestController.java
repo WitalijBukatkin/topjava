@@ -1,16 +1,14 @@
 package ru.javawebinar.topjava.web.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.util.UserUtil;
-import ru.javawebinar.topjava.util.ValidationUtil;
-import ru.javawebinar.topjava.web.validator.DuplicateEmailValidator;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -21,9 +19,6 @@ import java.util.List;
 public class AdminRestController extends AbstractUserController {
 
     public static final String REST_URL = "/rest/admin/users";
-
-    @Autowired
-    private DuplicateEmailValidator duplicateEmailValidator;
 
     @Override
     @GetMapping
@@ -38,14 +33,20 @@ public class AdminRestController extends AbstractUserController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> createWithLocation(@Valid @RequestBody User user, BindingResult result) {
-        duplicateEmailValidator.validate(UserUtil.asTo(user), result);
-
+    public ResponseEntity<User> createWithLocation(@Valid @RequestBody User user, BindingResult result) throws BindException {
         if (result.hasErrors()) {
-            ValidationUtil.getErrorResponse(result);
+            throw new BindException(result);
         }
 
-        User created = super.create(user);
+        User created;
+        try {
+            created = super.create(user);
+        } catch (DataIntegrityViolationException e) {
+            result.rejectValue("email", "user.duplicateEmail",
+                    "User with this email already exists");
+            throw new BindException(result);
+        }
+
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
                 .buildAndExpand(created.getId()).toUri();
@@ -61,14 +62,18 @@ public class AdminRestController extends AbstractUserController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody User user, @PathVariable int id, BindingResult result) {
-        duplicateEmailValidator.validate(UserUtil.asTo(user), result);
-
+    public void update(@Valid @RequestBody User user, @PathVariable int id, BindingResult result) throws BindException {
         if (result.hasErrors()) {
-            ValidationUtil.getErrorResponse(result);
+            throw new BindException(result);
         }
 
-        super.update(user, id);
+        try {
+            super.update(user, id);
+        } catch (DataIntegrityViolationException e) {
+            result.rejectValue("email", "user.duplicateEmail",
+                    "User with this email already exists");
+            throw new BindException(result);
+        }
     }
 
     @GetMapping("/by")

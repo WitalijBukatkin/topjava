@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
@@ -108,6 +110,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @Transactional(propagation = Propagation.NEVER)
     void updateWithDuplicateEmail() throws Exception {
         User updated = new User(USER);
         updated.setEmail(ADMIN.getEmail());
@@ -147,6 +150,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @Transactional(propagation = Propagation.NEVER)
     void createWithDuplicateEmail() throws Exception {
         User expected = new User(null, "New", USER.getEmail(), "newPass", 2300, Role.ROLE_USER, Role.ROLE_ADMIN);
         mockMvc.perform(MockMvcRequestBuilders.post(REST_URL)
