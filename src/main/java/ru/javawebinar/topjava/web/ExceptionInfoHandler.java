@@ -39,7 +39,8 @@ public class ExceptionInfoHandler {
         } else {
             log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), rootCause.toString());
         }
-        return new ErrorInfo(req.getRequestURL(), errorType, rootCause.toString());
+        return new ErrorInfo(req.getRequestURL(), errorType,
+                details.length != 0 ? details : new String[]{ValidationUtil.getMessage(rootCause)});
     }
 
     //  http://stackoverflow.com/a/22358422/548473
