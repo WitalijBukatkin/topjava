@@ -24,7 +24,6 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 import static ru.javawebinar.topjava.util.exception.ErrorType.*;
@@ -43,6 +42,7 @@ public class ExceptionInfoHandler {
             log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), rootCause.toString());
         }
         return new ErrorInfo(req.getRequestURL(), errorType,
+                messageUtil.getMessage(errorType.getErrorCode()),
                 details.length != 0 ? details : new String[]{ValidationUtil.getMessage(rootCause)});
     }
 
@@ -86,10 +86,7 @@ public class ExceptionInfoHandler {
                 ((BindException) e).getBindingResult() : ((MethodArgumentNotValidException) e).getBindingResult();
 
         String[] details = result.getFieldErrors().stream()
-                .map(fe -> {
-                    String msg = fe.getDefaultMessage();
-                    return msg == null ? messageUtil.getMessage(fe) : (msg.startsWith(fe.getField())) ? msg : fe.getField() + ' ' + msg;
-                }).filter(Objects::nonNull)
+                .map(fe -> messageUtil.getMessage(fe))
                 .toArray(String[]::new);
 
         return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR, details);
